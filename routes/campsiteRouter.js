@@ -192,7 +192,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
     Campsite.findById(req.params.campsiteId)
     .then(campsite => {
         if (campsite && campsite.comments.id(req.params.commentId)) {
-            campsite.comments.id(req.params.commentId).remove();
+            campsite.comments.id(req.params.commentId).remove(); //campsite is  the document/schema returned from your database or Mongoose/defined in the .then above
             campsite.save()
             .then(campsite => {
                 res.statusCode = 200;
@@ -213,5 +213,5 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
     .catch(err => next(err));
 });
 
-
 module.exports = campsiteRouter;
+

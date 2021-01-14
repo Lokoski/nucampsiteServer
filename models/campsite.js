@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose'); //Import mongoose
+require('mongoose-currency').loadType(mongoose); // Defining a schema type for currency 
+const Currency = mongoose.Types.Currency; //Using the currency middleware
 
-require('mongoose-currency').loadType(mongoose);
-const Currency = mongoose.Types.Currency;
+const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
     rating: {
@@ -26,7 +26,7 @@ const commentSchema = new Schema({
 const campsiteSchema = new Schema({
     name: {
         type: String,
-        required: true,
+        required: true, //we must use the exact key when making a POST request
         unique: true
     },
     description: {
@@ -50,7 +50,9 @@ const campsiteSchema = new Schema({
         type: Boolean,
         default: false
     },
-    comments: [commentSchema]
+    
+    comments: [commentSchema] //this is a sub-document(nested schema)//The data structure is an Array
+    //a one-to-many relationship --> this schema will contain many comments
 }, {
     timestamps: true
 });
