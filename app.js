@@ -8,6 +8,8 @@ var usersRouter = require('./routes/users');
 const campsiteRouter = require('./routes/campsiteRouter');
 const partnerRouter = require('./routes/partnerRouter');
 const promotionRouter = require('./routes/promotionRouter');
+const uploadRouter = require('./routes/uploadRouter');
+
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const passport = require('passport');
@@ -15,6 +17,14 @@ const config = require('./config')
 
 var app = express();
 
+app.all("*", (req, res, next) => {
+    if(req.secure){
+      return next();
+    } else {
+      console.log(`Redirecting to: https://${req.hostname}:${app.get('secPort')}${req.url}`);
+      res.redirect(301, `https://${req.hostname}:${app.get('secPort')}${req.url}`);
+  }
+})
 //Structure for database and for querying the database
 //Automation of queries or all HTTP verb requests
 const mongoose = require('mongoose');
@@ -77,6 +87,7 @@ app.use(express.static(path.join(__dirname, 'public'))); //directory for static 
 app.use('/campsites', campsiteRouter);
 app.use('/promotions', promotionRouter);
 app.use('/partners', partnerRouter);
+app.use('/imageUpload', uploadRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

@@ -15,6 +15,7 @@ const commentSchema = new Schema({
         type: String,
         required: true
     },
+    //This is how we can reference another document/schema
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
