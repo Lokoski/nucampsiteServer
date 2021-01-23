@@ -7,18 +7,17 @@ const cors = require('./cors');
 const router = express.Router();
 
 /* GET users listing. */
-router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, function(req, res, next) {
+router.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     User.find()
     .then(users => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(users); 
     })
+    .catch(err => next(err))
 });
 
-router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-.post("/signup", cors.corsWithOptions, (req, res) => {
+router.post("/signup", cors.corsWithOptions, (req, res) => {
     User.register(
     new User({ username: req.body.username }), //creates a new username from the body of the req
     req.body.password, //creates a new password from the body of the req
@@ -52,11 +51,11 @@ router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 );
 });
 
-router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-.post("/login", cors.corsWithOptions, passport.authenticate("local"), (req, res) => {
+router.post("/login", cors.corsWithOptions, passport.authenticate("local"), (req, res) => {
   const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
+      //res.cookie("cookiejwt", token) //send a cookie via JWT token
   res.json({
     success: true,
     token: token,
@@ -104,12 +103,10 @@ router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 //     }
 // });
 
-router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-.get("/logout", cors.corsWithOptions, (req, res, next) => {
+router.get("/logout", cors.corsWithOptions, (req, res, next) => {
   if (req.session) {
     req.session.destroy();
-    res.clearCookie("session-id");
-    //res.cookie("cookiejwt", token) //send a cookie via JWT token
+    //res.clearCookie("jwt");
     res.redirect("/");
   } else {
     const err = new Error("You are not logged in!");

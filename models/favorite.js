@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 
 const favoriteSchema = new Schema({
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type: mongoose.Schema.Types.ObjectId, //references another doc
+        ref: 'User' //sets how its gonna be called(don't know how to explain it better!)
     },
-    campsite: [{
+    campsites: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Campsite'
     }]

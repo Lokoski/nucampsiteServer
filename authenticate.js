@@ -25,6 +25,20 @@ const opts = {}; //JSON object
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken(); //how to extract the token and its send in the header
 opts.secretOrKey = config.secretKey; //Encryption of JWT
 
+
+// Making LogOut work / extracting the token
+
+// var cookieExtractor = function (req) {
+//     var token = null;
+//     if (req && req.cookies) {
+//         token = req.cookies['jwt'];
+//     }
+//     return token;
+// }
+
+// opts.jwtFromRequest = cookieExtractor;
+
+
 //Checking to see if a User already has a JWT token.
 exports.jwtPassport = passport.use(
     new JwtStrategy(

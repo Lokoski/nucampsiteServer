@@ -1,6 +1,11 @@
 const cors = require('cors');
 
+
+
 const whitelist = ['http://localhost:3000', 'https://localhost:3443'];
+
+//checking for the origin // if 2/3 match
+
 const corsOptionsDelegate = (req, callback) => {
     let corsOptions;
     console.log(req.header('Origin'));
