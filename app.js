@@ -2,6 +2,8 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
+const config = require('./config');
+const passport = require('passport');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -9,22 +11,8 @@ const campsiteRouter = require('./routes/campsiteRouter');
 const partnerRouter = require('./routes/partnerRouter');
 const promotionRouter = require('./routes/promotionRouter');
 const uploadRouter = require('./routes/uploadRouter');
+const favoriteRouter = require('./routes/favoriteRouter')
 
-const session = require('express-session');
-const FileStore = require('session-file-store')(session);
-const passport = require('passport');
-const config = require('./config')
-
-var app = express();
-
-app.all("*", (req, res, next) => {
-    if(req.secure){
-      return next();
-    } else {
-      console.log(`Redirecting to: https://${req.hostname}:${app.get('secPort')}${req.url}`);
-      res.redirect(301, `https://${req.hostname}:${app.get('secPort')}${req.url}`);
-  }
-})
 //Structure for database and for querying the database
 //Automation of queries or all HTTP verb requests
 const mongoose = require('mongoose');
@@ -37,6 +25,19 @@ const connect = mongoose.connect(url, { //not to throw warnings
     useNewUrlParser: true, 
     useUnifiedTopology: true
 });
+
+
+var app = express();
+
+app.all("*", (req, res, next) => {
+    if(req.secure){
+      return next();
+    } else {
+      console.log(`Redirecting to: https://${req.hostname}:${app.get('secPort')}${req.url}`);
+      res.redirect(301, `https://${req.hostname}:${app.get('secPort')}${req.url}`);
+  }
+})
+
 
 connect.then(() => console.log('Connected correctly to server'), 
     err => console.log(err)
@@ -52,13 +53,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser('12345-67890-09876-54321')); //Parses cookies
 
-app.use(session({
-  name: 'session-id',
-  secret: '12345-67890-09876-54321',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}))
 
 app.use(passport.initialize());
 //app.use(passport.session());
@@ -88,6 +82,7 @@ app.use('/campsites', campsiteRouter);
 app.use('/promotions', promotionRouter);
 app.use('/partners', partnerRouter);
 app.use('/imageUpload', uploadRouter);
+app.use('/favorites', favoriteRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

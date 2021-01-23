@@ -7,16 +7,18 @@ const cors = require('./cors');
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, function (req, res) { //authentication for user and/or admin privileges
-  User.find()
-  .then(users => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json(users)
-  })
+router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.get('/', cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, function(req, res, next) {
+    User.find()
+    .then(users => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(users); 
+    })
 });
 
-router.post("/signup", cors.corsWithOptions, (req, res) => {
+router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.post("/signup", cors.corsWithOptions, (req, res) => {
     User.register(
     new User({ username: req.body.username }), //creates a new username from the body of the req
     req.body.password, //creates a new password from the body of the req
@@ -50,7 +52,8 @@ router.post("/signup", cors.corsWithOptions, (req, res) => {
 );
 });
 
-router.post("/login", cors.corsWithOptions, passport.authenticate("local"), (req, res) => {
+router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.post("/login", cors.corsWithOptions, passport.authenticate("local"), (req, res) => {
   const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
@@ -101,7 +104,8 @@ router.post("/login", cors.corsWithOptions, passport.authenticate("local"), (req
 //     }
 // });
 
-router.get("/logout", cors.corsWithOptions, (req, res, next) => {
+router.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.get("/logout", cors.corsWithOptions, (req, res, next) => {
   if (req.session) {
     req.session.destroy();
     res.clearCookie("session-id");
